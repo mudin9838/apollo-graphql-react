@@ -1,0 +1,20 @@
+{
+  "name": "apollo-graphql-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "json-graphql-server": "json-graphql-server db.cjs --p 4000"
+  },
+  "devDependencies": {
+    "json-graphql-server": "^3.2.1",
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.4",
+    "react-bootstrap": "^2.10.9"
+  }
+}
