@@ -23,6 +23,17 @@ const confirmDeleteHandler = () => {
     variables: {
       id: selectedToyIdToDelete,
     },
+            update: (cache, { data: { DELETE_TOY_BY_ID  } }) => { //update method immediately executed once the api response is successful. createToy newly createdobject
+      cache.modify({
+        fields: {
+          allToys(existingToys = [], { readField }) { //readfield-help to read the field value from the cache
+            existingToys = existingToys.filter(
+              toy=>readField("id", toy) !== selectedToyIdToDelete); // remove the old data object
+            return [...existingToys]; 
+          },
+        }
+      });
+      }
   }).then(() => {
     setAllToysData((prevToys) =>
       prevToys.filter((toy) => toy.id !== selectedToyIdToDelete) //removing the deleted toy from the list

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import React, { useEffect, useRef } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
 import { data, useNavigate, useParams } from 'react-router-dom';
@@ -28,7 +28,29 @@ const updateToyHandler = () =>{ //in click event handler we invoked updateToy me
             price: parseFloat(price.current.value),
             image: image.current.value,
         },
-    }).then(() => { //after completion
+        update: (cache, { data: { updateToy } }) => { //update method immediately executed once the api response is successful. createToy newly createdobject
+            cache.modify({
+                fields: {
+                    allToys(existingToys = [], { readField }) { //readfield-help to read the field value from the cache
+                        existingToys = existingToys.filter(toy=>readField("id", toy) !== updateToy.id); // remove the old data object
+                        const updatedToyRef = cache.writeFragment({
+                            data: updateToy, // newly created toy data
+                            //fragment - a graphql syntax to define the shape of the data we want to read/write
+                            fragment: gql`   
+                                fragment UpdatedToy on Toy {
+                                    id
+                                    name
+                                    price
+                                    image
+                                }
+                            `,
+                        });
+                        return [...existingToys, updatedToyRef]; //injct the adding the newly created toy
+                    },
+                }
+              });
+              }
+          }).then(() => { //after completion
         navigate("/");
     }
 ).catch((err) => {

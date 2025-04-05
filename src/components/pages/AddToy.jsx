@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import React, { useRef } from 'react'
 import { Button, Col, Container, Form, Row } from 'react-bootstrap'
 import { CREATE_NEW_TOY } from '../../grapghql/toyMutation';
@@ -18,7 +18,28 @@ const addToyHandler=()=>{
             price: parseFloat(price.current.value),
             image: image.current.value,
         },
-    }).then(() => { //after completion
+        update: (cache, { data: { createToy } }) => { //update method immediately executed once the api response is successful. createToy newly createdobject
+            cache.modify({
+                fields: {
+                    allToys(existingToys = []) { //cache automatically injected the existing toys to allToys, if no data empty array
+                        const newToyRef = cache.writeFragment({
+                            data: createToy, // newly created toy data
+                            //fragment - a graphql syntax to define the shape of the data we want to read/write
+                            fragment: gql`   
+                                fragment NewToy on Toy {
+                                    id
+                                    name
+                                    price
+                                    image
+                                }
+                            `,
+                        });
+                        return [...existingToys, newToyRef]; //injct the adding the newly created toy
+                    },
+                }
+              });
+              }
+          }).then(() => { //after completion
         navigate("/");
     }).catch((err) => {
         console.log(err);
