@@ -65,7 +65,7 @@ const confirmDeleteHandler = () => {
   return (
     <>
       <DeleteConfirmation
-        showModal={showModal} // Corrected prop name
+        showModal={showModal} 
         title="Delete Confirmation"
         body="Are you sure you want to delete this toy?"
         closeConfirmDeleteModalHandler={closeConfirmDeleteModalHandler}
